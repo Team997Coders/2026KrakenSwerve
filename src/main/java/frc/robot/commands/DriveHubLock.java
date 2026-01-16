@@ -7,7 +7,10 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -42,12 +45,48 @@ public class DriveHubLock extends Command {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
+  private double thetaSpeed;
+  private Pose2d goalPose;
+  //TODO: SET FIELD TO 2026 WHEN UPDATED
+  private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   @Override
   public void execute() {
     var xy = speedXY.get();
 
-    drivebase.defaultDrive(-xy[1], -xy[0], r);
+    if (alliance.equals(DriverStation.Alliance.Red))
+    {
+      //10
+      Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
+      goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+    }
+    else if (alliance.equals(DriverStation.Alliance.Blue))
+    {
+      //26
+      Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
+      goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+    }
+    else 
+    {
+      if (drivebase.getPose().getX() > 16.53)
+      {
+        Pose2d tag = aprilTagFieldLayout.getTagPose(26).orElseThrow().toPose2d();
+        goalPose = new Pose2d(tag.getX() - Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      }
+      else 
+      {
+        Pose2d tag = aprilTagFieldLayout.getTagPose(10).orElseThrow().toPose2d();
+        goalPose = new Pose2d(tag.getX() + Units.inchesToMeters(47.0/2), tag.getY(), tag.getRotation());
+      }
+    }
+
+    Pose2d robotPose = drivebase.getPose();
+    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY())/(goalPose.getX() - robotPose.getX())));
+    thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
+
+    drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
   }
+
+
 
   // Called once the command ends or is interrupted.
   @Override
