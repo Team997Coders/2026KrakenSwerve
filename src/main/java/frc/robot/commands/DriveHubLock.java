@@ -75,8 +75,6 @@ public class DriveHubLock extends Command {
       thetaController.setTolerance(Units.degreesToRadians(2));
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
       thetaController.reset(drivebase.getPose().getRotation().getRadians());
-
-      SmartDashboard.putNumber("IT changed", vx);
     }
 
     if (alliance.equals(DriverStation.Alliance.Red))
@@ -106,8 +104,8 @@ public class DriveHubLock extends Command {
     }
 
     Pose2d robotPose = drivebase.getPose();
-    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() )//- vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX()))); //- vx * Constants.airTime)));
+    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
+          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
 
     drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);

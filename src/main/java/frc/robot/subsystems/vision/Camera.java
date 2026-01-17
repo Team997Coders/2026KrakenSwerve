@@ -28,6 +28,8 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 public class Camera
 {
     private PhotonCamera camera;
+
+    //TODO: SET FIELD TO 2026 WHEN UPDATED
     private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     private PhotonPoseEstimator photonPoseEstimator;
 
