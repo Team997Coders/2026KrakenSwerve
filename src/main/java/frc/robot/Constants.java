@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static final int gyroID = 46;
+  public static double airTime = 1.2;
 
   public static final class DriveConstants {
     public static final double deadband = 0.02;
@@ -140,4 +141,5 @@ public final class Constants {
     public static final int id = 50;
     public static final int ledCount = 50;
   }
+
 }
