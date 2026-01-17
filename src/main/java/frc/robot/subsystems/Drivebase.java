@@ -170,14 +170,18 @@ public class Drivebase extends SubsystemBase {
       speedX = slewRateX.calculate(speedX);
       speedY = slewRateY.calculate(speedY);
     }
-
+    fieldOrientedDrive(speedX, speedY, rot);
     // if (this.fieldOrientedEntry.get(true)) {
     //   fieldOrientedDrive(speedX, speedY, rot);
     // } else {
     //   robotOrientedDrive(speedX, speedY, rot);
     // }
-    fieldOrientedDrive(speedX, speedY, rot);
   }
+
+  public Canandgyro getGyro()
+    {
+      return this.gyro;
+    }
 
   /** drive:
    * Move the robot. Given the requested chassis speed (where do we want to go) in meters/sec and radians.

@@ -63,7 +63,7 @@ public class RobotContainer {
   private final Drivebase drivebase = new Drivebase(gyro, cameraBlock);
 
   //
-  private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
+  //private final ArrayList<Pose2d> potentialLocations = new ArrayList<Pose2d>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

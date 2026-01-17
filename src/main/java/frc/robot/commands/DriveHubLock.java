@@ -11,6 +11,7 @@ import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.DARE;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -65,15 +66,17 @@ public class DriveHubLock extends Command {
     double vx = drivebase.getCurrentSpeeds().vxMetersPerSecond;
     double vy = drivebase.getCurrentSpeeds().vyMetersPerSecond;
 
-    var tmp = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
-    if (!pidValues.equals(tmp))
+    var valuesFromSmartDashbord = SmartDashboard.getNumberArray("Hub Lock PID Constants", pidValues);
+    if (!(valuesFromSmartDashbord[0].equals(pidValues[0]) && valuesFromSmartDashbord[1].equals(pidValues[1]) && valuesFromSmartDashbord[2].equals(pidValues[2])))
     {
-      pidValues = tmp;
+      pidValues = valuesFromSmartDashbord;
       thetaController = new ProfiledPIDController(pidValues[0], pidValues[1], pidValues[2], THETA_CONSTRAINTS);
-      
+
       thetaController.setTolerance(Units.degreesToRadians(2));
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
       thetaController.reset(drivebase.getPose().getRotation().getRadians());
+
+      SmartDashboard.putNumber("IT changed", vx);
     }
 
     if (alliance.equals(DriverStation.Alliance.Red))
@@ -103,8 +106,8 @@ public class DriveHubLock extends Command {
     }
 
     Pose2d robotPose = drivebase.getPose();
-    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
-          /(goalPose.getX() - robotPose.getX() - vx * Constants.airTime)));
+    thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() )//- vy * Constants.airTime)
+          /(goalPose.getX() - robotPose.getX()))); //- vx * Constants.airTime)));
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
 
     drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
