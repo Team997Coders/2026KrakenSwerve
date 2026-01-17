@@ -24,7 +24,8 @@ public class DriveHubLock extends Command {
   private final DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
 
   private static final TrapezoidProfile.Constraints THETA_CONSTRAINTS = new TrapezoidProfile.Constraints(18, 18);
-  private final ProfiledPIDController thetaController = new ProfiledPIDController(3, 0, 0, THETA_CONSTRAINTS);
+  private final ProfiledPIDController thetaController = new ProfiledPIDController(
+    9, 2, 0, THETA_CONSTRAINTS);
 
   /** Creates a new Drive. */
   public DriveHubLock(Drivebase drivebase, Supplier<double[]> speedXY) {

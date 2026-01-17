@@ -56,11 +56,19 @@ public class SwerveModule {
     speedConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
     speedConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+    double rampRate = 0.1;
+    speedConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = rampRate;
+    speedConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = rampRate;
+    speedConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = rampRate;
+
     speedMotor.getConfigurator().apply(speedConfig, 0.25);
 
     turnConfig = new TalonFXConfiguration();
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     turnConfig.Slot0 = constants.SteerMotorGains;
+    turnConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = rampRate;
+    turnConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = rampRate;
+    turnConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = rampRate;
 
     angleMotor.getConfigurator().apply(speedConfig, 0.25);
 
