@@ -32,6 +32,7 @@ public class DriveHubLock extends Command {
   private ProfiledPIDController thetaController = new ProfiledPIDController(
     9, 2, 0, THETA_CONSTRAINTS);
   private Double[] pidValues = new Double[]{9.0, 2.0, 0.0};
+  private double thetaTollerance = 2;
 
     
 
@@ -40,10 +41,10 @@ public class DriveHubLock extends Command {
     this.drivebase = drivebase;
     this.speedXY = speedXY;
 
-    thetaController.setTolerance(Units.degreesToRadians(2));
+    thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{9.0, 2.0, 0.0});
+    SmartDashboard.putNumberArray("Hub Lock PID Constants", new Double[]{5.0, 0.0, 0.0});
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.drivebase);
@@ -72,7 +73,7 @@ public class DriveHubLock extends Command {
       pidValues = valuesFromSmartDashbord;
       thetaController = new ProfiledPIDController(pidValues[0], pidValues[1], pidValues[2], THETA_CONSTRAINTS);
 
-      thetaController.setTolerance(Units.degreesToRadians(2));
+      thetaController.setTolerance(Units.degreesToRadians(thetaTollerance));
       thetaController.enableContinuousInput(-Math.PI, Math.PI);
       thetaController.reset(drivebase.getPose().getRotation().getRadians());
     }
@@ -104,11 +105,29 @@ public class DriveHubLock extends Command {
     }
 
     Pose2d robotPose = drivebase.getPose();
+    
     thetaController.setGoal(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
           /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
+    SmartDashboard.putNumber("theta goal", thetaController.getGoal().position);
+
+    SmartDashboard.putNumber("goal: ", Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
+          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)));
+    SmartDashboard.putNumber("measered value: ", robotPose.getRotation().getRadians());
+
     thetaSpeed = thetaController.calculate(robotPose.getRotation().getRadians());
+    SmartDashboard.putBoolean("at goal", thetaController.atGoal());
+
+    if (Math.abs(thetaSpeed) < 0.04 || Math.abs(Math.atan((goalPose.getY() - robotPose.getY() - vy * Constants.airTime)
+          /(goalPose.getX() - robotPose.getX()- vx * Constants.airTime)) - robotPose.getRotation().getRadians()) < 0.05)
+    {
+      thetaSpeed = 0;
+    }
+    
 
     drivebase.defaultDrive(-xy[1], -xy[0], thetaSpeed);
+    SmartDashboard.putNumber("x speed", -xy[1]);
+    SmartDashboard.putNumber("y speed", -xy[0]);
+    SmartDashboard.putNumber("theta speed", thetaSpeed);
   }
 
 
