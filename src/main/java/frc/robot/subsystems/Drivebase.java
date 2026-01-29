@@ -4,7 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.configs.AudioConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.traits.CommonDevice;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -73,6 +79,15 @@ public class Drivebase extends SubsystemBase {
 
   private CameraBlock cameraBlock;
 
+  ArrayList<CommonDevice> instruments = new ArrayList<CommonDevice>(
+      Arrays.asList(frontLeft.getAngleMotor(), frontLeft.getDriveMotor(), frontRight.getAngleMotor(), frontRight.getAngleMotor(),
+    backLeft.getAngleMotor(), backLeft.getDriveMotor(), backRight.getAngleMotor(), backRight.getDriveMotor()));
+
+  private Orchestra orchestra = new Orchestra(instruments, "starwars.chrp");
+
+  private AudioConfigs audioConfigs = new AudioConfigs();
+
+
   /** Creates a new Drivebase. */
   public Drivebase(Canandgyro gyro, CameraBlock cameraBlock) {
     var inst = NetworkTableInstance.getDefault();
@@ -140,6 +155,9 @@ public class Drivebase extends SubsystemBase {
         builder.addDoubleProperty("Robot Angle", () -> getFieldAngle(), null);
       }
     });
+
+    audioConfigs.withAllowMusicDurDisable(true);
+    orchestra.play();
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds()
@@ -170,18 +188,14 @@ public class Drivebase extends SubsystemBase {
       speedX = slewRateX.calculate(speedX);
       speedY = slewRateY.calculate(speedY);
     }
-    fieldOrientedDrive(speedX, speedY, rot);
+
     // if (this.fieldOrientedEntry.get(true)) {
     //   fieldOrientedDrive(speedX, speedY, rot);
     // } else {
     //   robotOrientedDrive(speedX, speedY, rot);
     // }
+    fieldOrientedDrive(speedX, speedY, rot);
   }
-
-  public Canandgyro getGyro()
-    {
-      return this.gyro;
-    }
 
   /** drive:
    * Move the robot. Given the requested chassis speed (where do we want to go) in meters/sec and radians.
