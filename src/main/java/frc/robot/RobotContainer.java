@@ -103,6 +103,7 @@ public class RobotContainer {
   }
 
   private double[] getScaledXY() {
+
     double[] xy = getXY();
 
     // Convert to Polar coordinates
