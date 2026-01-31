@@ -4,11 +4,13 @@
 
 package frc.robot.commands;
 
+import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.AudioConfigs;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.traits.CommonDevice;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,10 +34,12 @@ public class PlayMusic extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
-    for (CommonDevice motor: drivebase.getInstruments())
+
+    List<TalonFX> motors = drivebase.getInstruments();
+    int[] tracks = {1, 2, 3, 4, 5, 6, 18, 17};
+    for (int i = 0; i < tracks.length; i++)
     {
-      orchestra.addInstrument(motor);
+      orchestra.addInstrument(motors.get(i), tracks[i]);
     }
     
     SmartDashboard.putBoolean("load chrp file", orchestra.loadMusic("starwars3.chrp").isOK());
