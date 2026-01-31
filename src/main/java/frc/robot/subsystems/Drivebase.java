@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.AudioConfigs;
@@ -79,15 +80,6 @@ public class Drivebase extends SubsystemBase {
 
   private CameraBlock cameraBlock;
 
-  ArrayList<CommonDevice> instruments = new ArrayList<CommonDevice>(
-      Arrays.asList(frontLeft.getAngleMotor(), frontLeft.getDriveMotor(), frontRight.getAngleMotor(), frontRight.getAngleMotor(),
-    backLeft.getAngleMotor(), backLeft.getDriveMotor(), backRight.getAngleMotor(), backRight.getDriveMotor()));
-
-  private Orchestra orchestra = new Orchestra(instruments, "starwars.chrp");
-
-  private AudioConfigs audioConfigs = new AudioConfigs();
-
-
   /** Creates a new Drivebase. */
   public Drivebase(Canandgyro gyro, CameraBlock cameraBlock) {
     var inst = NetworkTableInstance.getDefault();
@@ -156,8 +148,15 @@ public class Drivebase extends SubsystemBase {
       }
     });
 
-    audioConfigs.withAllowMusicDurDisable(true);
-    orchestra.play();
+    
+  }
+
+  public List<TalonFX> getInstruments()
+  {
+    List<TalonFX> instruments = new ArrayList<TalonFX>();
+    instruments = Arrays.asList(frontLeft.getAngleMotor(), frontLeft.getDriveMotor(), frontRight.getAngleMotor(), frontRight.getAngleMotor(),
+    backLeft.getAngleMotor(), backLeft.getDriveMotor(), backRight.getAngleMotor(), backRight.getDriveMotor());
+    return instruments;
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds()
