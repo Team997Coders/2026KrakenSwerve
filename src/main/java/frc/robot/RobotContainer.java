@@ -10,11 +10,14 @@ import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.vision.Camera;
 import frc.robot.subsystems.vision.CameraBlock;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+import com.studica.frc.Navx;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -42,8 +45,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Canandgyro gyro = new Canandgyro(Constants.gyroID);
-
+  private final Navx gyro = new Navx(Constants.gyroID);
+  
   //The same joystick - drivestick is for joystick inputs and c_driveStick is for button triggers
   private static XboxController driveStick = new XboxController(0);
   private static CommandXboxController c_driveStick = new CommandXboxController(0);
@@ -143,11 +146,11 @@ public class RobotContainer {
   }
 
   public void resetGyro() {
-    gyro.setYaw(0);
+    gyro.resetYaw();
   }
 
   public double getGyroYaw() {
-    return -gyro.getYaw();
+    return -gyro.getYaw().in(Rotations);
   }
 
   public boolean onBlueAlliance() {

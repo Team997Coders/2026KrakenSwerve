@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+import com.studica.frc.Navx;
 
 import swervelib.SwerveModule;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -24,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,7 +49,8 @@ public class Drivebase extends SubsystemBase {
 
   private final double MAX_VOLTAGE = 12;
 
-  private Canandgyro gyro;
+  private Navx gyro;
+  
 
   private SwerveModule frontLeft = new SwerveModule(SwerveModules.frontLeft, MAX_VELOCITY, MAX_VOLTAGE);
   private SwerveModule frontRight = new SwerveModule(SwerveModules.frontRight, MAX_VELOCITY, MAX_VOLTAGE);
@@ -74,7 +80,7 @@ public class Drivebase extends SubsystemBase {
   private CameraBlock cameraBlock;
 
   /** Creates a new Drivebase. */
-  public Drivebase(Canandgyro gyro, CameraBlock cameraBlock) {
+  public Drivebase(Navx gyro, CameraBlock cameraBlock) {
     var inst = NetworkTableInstance.getDefault();
     var table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
@@ -148,7 +154,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double getFieldAngle() {
-    return -gyro.getYaw();
+    return -gyro.getYaw().in(Rotations);
   }
 
   public void fieldOrientedDrive(double speedX, double speedY, double rot) {
